@@ -31,46 +31,43 @@ jobs:
 
   # Integration tests prove the concurrency fixes (admission/bed race,
   # payment overpayment, double-dispense) against a real transaction, so
-  # they need a live database. Add repo secrets (Settings → Secrets and
-  # variables → Actions) pointing at a dedicated CI Supabase project — never
-  # point this at the demo/production database — then uncomment.
-  # integration:
-  #   runs-on: ubuntu-latest
-  #   needs: lint-typecheck-test
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npx prisma generate
-  #     - run: npx prisma migrate deploy
-  #       env:
-  #         DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
-  #         DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
-  #     - run: npm run test:integration
-  #       env:
-  #         DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
-  #         DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
+  # they need a live database. Points at a dedicated CI Supabase project
+  # (medicore-ci) — never the demo/production database.
+  integration:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
+      - run: npm run test:integration
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
 
-  # `next build` needs DATABASE_URL/NEXT_PUBLIC_SUPABASE_* at build time.
-  # Add repo secrets (Settings → Secrets and variables → Actions) with a
-  # dedicated CI Supabase project, then uncomment this job.
-  # build:
-  #   runs-on: ubuntu-latest
-  #   needs: lint-typecheck-test
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run build
-  #       env:
-  #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  #         DIRECT_URL: ${{ secrets.DIRECT_URL }}
-  #         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-  #         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-  #         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  # `next build` needs DATABASE_URL/NEXT_PUBLIC_SUPABASE_* at build time
+  # (env validation runs at module load). Same dedicated CI Supabase project.
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
