@@ -4,6 +4,7 @@ Sistema integral de gestión hospitalaria (Hospital Management System) construid
 
 > Proyecto de portafolio con estándares de software clínico real: RBAC con 9 roles, auditoría inmutable, historia clínica append-only y prevención de doble-booking a nivel de base de datos.
 
+🌐 **[Demo en vivo](https://medicore-hms-sage.vercel.app)** — inicia sesión con cualquiera de las [credenciales de demostración](#usuarios-demo-contraseña-medicore2026).
 📖 **[Manual de usuario](docs/manual-usuario.pdf)** — recorrido por cada módulo con capturas de pantalla, tabla de roles y permisos, y credenciales de demostración.
 
 ## Stack
