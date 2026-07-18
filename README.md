@@ -86,6 +86,8 @@ npm run dev
 
 La matriz canónica de roles y permisos vive en [`src/lib/auth/permissions.ts`](src/lib/auth/permissions.ts) y se persiste en la base de datos vía seed.
 
+📄 **[SECURITY.md](SECURITY.md)** — modelo de amenazas completo, y por qué el proyecto no usa Row Level Security en Postgres (es una decisión documentada, no un descuido).
+
 ## Scripts
 
 | Comando | Descripción |
