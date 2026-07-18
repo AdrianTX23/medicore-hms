@@ -4,6 +4,8 @@ Sistema integral de gestión hospitalaria (Hospital Management System) construid
 
 > Proyecto de portafolio con estándares de software clínico real: RBAC con 9 roles, auditoría inmutable, historia clínica append-only y prevención de doble-booking a nivel de base de datos.
 
+📖 **[Manual de usuario](docs/manual-usuario.pdf)** — recorrido por cada módulo con capturas de pantalla, tabla de roles y permisos, y credenciales de demostración.
+
 ## Stack
 
 | Capa | Tecnología |
