@@ -1,10 +1,7 @@
 import "server-only";
 import { BusinessRuleError, NotFoundError } from "@/core/errors";
 import { LAB_ORDER_TRANSITIONS } from "@/features/laboratory/constants";
-import {
-  isAbnormal,
-  matchReferenceRange,
-} from "@/features/laboratory/queries/lab.queries";
+import { isAbnormal, matchReferenceRange } from "@/features/laboratory/lib/reference-range";
 import { prisma } from "@/lib/prisma";
 import type { SessionUser } from "@/lib/auth/session";
 

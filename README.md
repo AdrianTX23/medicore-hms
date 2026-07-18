@@ -93,9 +93,20 @@ La matriz canónica de roles y permisos vive en [`src/lib/auth/permissions.ts`](
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Build de producción |
 | `npm run typecheck` | Verificación de tipos |
+| `npm test` | Tests unitarios (sin base de datos) |
+| `npm run test:integration` | Tests de integración contra la base de datos real |
 | `npm run db:migrate` | Aplica migraciones (`prisma migrate deploy`) |
 | `npm run db:seed` | Ejecuta `prisma/seed.ts` (idempotente) |
 | `npm run db:studio` | Prisma Studio |
+
+## Testing
+
+Dos suites separadas, con propósitos distintos:
+
+- **`npm test`** — unitarios, puros, sin base de datos: matriz de permisos RBAC, máquinas de estado (citas, laboratorio), validación de esquemas Zod, utilidades de fecha/moneda (incluye tests de regresión para bugs de zona horaria ya corregidos). Corren en CI en cada PR.
+- **`npm run test:integration`** — contra la base de datos real (necesita `DATABASE_URL`). Prueban específicamente que los 3 guards de concurrencia de la auditoría de producción funcionan bajo carga real: dos admisiones simultáneas a la misma cama, dos pagos simultáneos que sobrepagarían una factura, y doble dispensación simultánea de una receta. Cada test crea sus propios datos (prefijo `IT-`) y los limpia al terminar.
+
+Las lógicas puras que antes vivían mezcladas con queries de Prisma (`dayRange`, `isAbnormal`, `matchReferenceRange`) se movieron a módulos sin dependencias de base de datos (`src/features/*/lib/`) específicamente para que fueran testeables sin conexión — un cambio de arquitectura menor motivado directamente por escribir estos tests.
 
 ## Roadmap por fases
 

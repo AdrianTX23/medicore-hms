@@ -2,14 +2,11 @@ import "server-only";
 import type { AppointmentStatus } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
 import type { Paginated } from "@/shared/utils/table-params";
+// dayRange() is pure (no Prisma import) and lives in ../lib/day-range.ts so
+// it's unit-testable without a database — re-exported for existing callers.
+import { dayRange } from "../lib/day-range";
 
-/** Local day range [00:00, 24:00) for a yyyy-mm-dd string (clinic timezone = server timezone). */
-export function dayRange(dateStr: string): { start: Date; end: Date } {
-  const [y, m, d] = dateStr.split("-").map(Number);
-  const start = new Date(y, m - 1, d);
-  const end = new Date(y, m - 1, d + 1);
-  return { start, end };
-}
+export { dayRange };
 
 export type AppointmentListItem = {
   id: string;

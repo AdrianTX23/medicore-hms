@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  lint-and-typecheck:
+  lint-typecheck-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,12 +25,41 @@ jobs:
 
       - run: npm run typecheck
 
+      # Unit tests are pure logic (RBAC matrix, state machines, schema
+      # validation, date/currency formatting) — no DB, safe without secrets.
+      - run: npm test
+
+  # Integration tests prove the concurrency fixes (admission/bed race,
+  # payment overpayment, double-dispense) against a real transaction, so
+  # they need a live database. Add repo secrets (Settings → Secrets and
+  # variables → Actions) pointing at a dedicated CI Supabase project — never
+  # point this at the demo/production database — then uncomment.
+  # integration:
+  #   runs-on: ubuntu-latest
+  #   needs: lint-typecheck-test
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: npm
+  #     - run: npm ci
+  #     - run: npx prisma generate
+  #     - run: npx prisma migrate deploy
+  #       env:
+  #         DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+  #         DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
+  #     - run: npm run test:integration
+  #       env:
+  #         DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+  #         DIRECT_URL: ${{ secrets.CI_DIRECT_URL }}
+
   # `next build` needs DATABASE_URL/NEXT_PUBLIC_SUPABASE_* at build time.
   # Add repo secrets (Settings → Secrets and variables → Actions) with a
   # dedicated CI Supabase project, then uncomment this job.
   # build:
   #   runs-on: ubuntu-latest
-  #   needs: lint-and-typecheck
+  #   needs: lint-typecheck-test
   #   steps:
   #     - uses: actions/checkout@v4
   #     - uses: actions/setup-node@v4
