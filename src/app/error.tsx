@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { ArrowCounterClockwise, Warning } from "@phosphor-icons/react";
 import { MediCoreMark } from "@/shared/components/brand/medicore-mark";
 import { Button } from "@/shared/components/ui/button";
@@ -14,6 +15,7 @@ export default function RootError({
 }) {
   useEffect(() => {
     console.error("[root]", error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

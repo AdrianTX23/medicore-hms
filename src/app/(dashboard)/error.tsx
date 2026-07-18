@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import * as Sentry from "@sentry/nextjs";
 import { ArrowCounterClockwise, House, Warning } from "@phosphor-icons/react";
 import { Button } from "@/shared/components/ui/button";
 
@@ -14,6 +15,7 @@ export default function DashboardError({
 }) {
   useEffect(() => {
     console.error("[dashboard]", error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

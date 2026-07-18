@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import * as Sentry from "@sentry/nextjs";
 import { DomainError } from "@/core/errors";
 import { requireAuth } from "@/lib/auth/guards";
 import type { Permission } from "@/lib/auth/permissions";
@@ -109,6 +110,7 @@ export function createSafeAction<TSchema extends z.ZodType, TOutput>(
         return { success: false, error: error.message };
       }
       console.error("[action] unexpected error:", error);
+      Sentry.captureException(error);
       return { success: false, error: "Ocurrió un error inesperado. Inténtalo de nuevo." };
     }
   };

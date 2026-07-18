@@ -14,6 +14,9 @@ const serverSchema = z.object({
 const publicSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  // Optional: Sentry no-ops with an undefined DSN, so local dev works
+  // without it — only production deploys need it actually set.
+  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 });
 
 function formatIssues(error: z.ZodError): string {
@@ -24,6 +27,7 @@ const publicParsed = publicSchema.safeParse({
   // NEXT_PUBLIC_* must be referenced statically so Next.js inlines them in the client bundle
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
 });
 
 if (!publicParsed.success) {
