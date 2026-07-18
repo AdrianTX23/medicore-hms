@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Only needs the schema file, not a live DB — safe without secrets.
+      - run: npx prisma generate
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+  # `next build` needs DATABASE_URL/NEXT_PUBLIC_SUPABASE_* at build time.
+  # Add repo secrets (Settings → Secrets and variables → Actions) with a
+  # dedicated CI Supabase project, then uncomment this job.
+  # build:
+  #   runs-on: ubuntu-latest
+  #   needs: lint-and-typecheck
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: npm
+  #     - run: npm ci
+  #     - run: npm run build
+  #       env:
+  #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  #         DIRECT_URL: ${{ secrets.DIRECT_URL }}
+  #         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  #         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+  #         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
